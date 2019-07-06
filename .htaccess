@@ -1,0 +1,26 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    ErrorDocument 404 /views/error/404.html
+
+    # public以下に素材がある場合、それを表示
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # /にアクセスされた場合、views/を表示
+    RewriteRule ^$ views/ [L]
+
+    RewriteCond %{DOCUMENT_ROOT}/views/$1 -d
+    RewriteRule ^(.*)$ views/$1/index.html [L]
+
+    # views/にアクセスされた場合、.php/.htmlの拡張子を付与して表示
+    RewriteCond %{DOCUMENT_ROOT}/views/$1.php -f
+    RewriteRule ^(.*)$ views/$1.php [L]
+    RewriteCond %{DOCUMENT_ROOT}/views/$1.html -f
+    RewriteRule ^(.*)$ views/$1.html [L]
+
+    # viewsもpublicもなかった場合。404ページ表示
+    RewriteRule ^!(views|public) - [R=404]
+</IfModule>

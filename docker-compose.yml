@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  app:
+    hostname: app
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    user: root
+    volumes:
+      - ./docker/config-apache-sites:/etc/apache2/sites-enabled:ro
+      - .:/var/www/html
+    ports:
+      - "80:80"

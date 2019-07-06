@@ -1,0 +1,89 @@
+const path = require('path'),
+    ExtractTextPlugin = require('extract-text-webpack-plugin'),
+    webpack = require('webpack'),
+    cssnano = require('cssnano');
+
+const workDirectory = path.join(__dirname);
+
+// 開発環境がproductionの場合はproductionモードで起動
+const isProduction = process.env.NODE_ENV === 'production';
+
+module.exports = [{
+    mode: isProduction ? 'production' : 'development',
+    entry: {
+        'index': path.join(workDirectory, 'src', 'scripts', 'entry.js')
+    },
+    output: {
+        path: path.join(workDirectory, 'public'),
+        filename: 'bundle.js'
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    query: {
+                        compact: isProduction
+                    }
+                }
+            }
+        ]
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery',
+            "window.$": "jquery",
+        })
+    ],
+}, {
+    mode: isProduction ? 'production' : 'development',
+    entry: {
+        'style': path.join(workDirectory, 'src', 'styles', 'entry.scss')
+    },
+    output: {
+        path: path.join(workDirectory, 'public'),
+        filename: '[name].css'
+    },
+    devtool: isProduction ? '' : 'source-map',
+    module: {
+        rules: [
+            {
+                test: /\.scss$/,
+                use: ExtractTextPlugin.extract({
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                sourceMap: !isProduction,
+                                url: false,
+                            }
+                        }, {
+                            loader: 'postcss-loader',
+                            options: {
+                                sourceMap: !isProduction,
+                                plugins: [
+                                    cssnano({
+                                        preset: 'default',
+                                    })
+                                ]
+                            },
+                        },
+                        {
+                            loader: 'sass-loader',
+                            options: {
+                                sourceMap: !isProduction,
+                            }
+                        }
+                    ],
+                })
+            }
+        ]
+    },
+    plugins: [
+        new ExtractTextPlugin('[name].css'),
+    ]
+}];
