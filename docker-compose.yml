@@ -9,6 +9,6 @@ services:
     user: root
     volumes:
       - ./docker/config-apache-sites:/etc/apache2/sites-enabled:ro
-      - .:/var/www/html
+      - ./public:/var/www/html
     ports:
       - "80:80"
