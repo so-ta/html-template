@@ -28,6 +28,6 @@
     "webpack-cli": "^3.3.5"
   },
   "devDependencies": {
-    "jquery": "^3.4.0"
+    "jquery": "^3.5.0"
   }
 }
